@@ -3,6 +3,8 @@
 A small remote MCP server for ChatGPT official Web. It gives ChatGPT a simple Markdown-oriented workspace backed by local files.
 
 The service exposes MCP tools for listing, reading, searching, writing, patching, moving, and trashing text files. It is designed for personal use with ChatGPT Developer Mode, OAuth, and Cloudflare Tunnel.
+<img width="889" height="934" alt="image" src="https://github.com/user-attachments/assets/9ed480ee-9c19-414c-b50c-b5d349c0e8c4" />
+
 
 ## What It Runs
 
