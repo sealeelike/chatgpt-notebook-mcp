@@ -1,4 +1,4 @@
-# ChatGPT Docs MCP
+# ChatGPT Notebook MCP
 
 A small remote MCP server for ChatGPT official Web. It gives ChatGPT a simple Markdown-oriented workspace backed by local files.
 
@@ -10,7 +10,7 @@ The service exposes MCP tools for listing, reading, searching, writing, patching
 ChatGPT
   -> https://your-mcp-domain.example.com
   -> Cloudflare Tunnel
-  -> chatgpt-docs-mcp:8787
+  -> chatgpt-notebook-mcp:8787
   -> data/docs
 ```
 
@@ -38,7 +38,7 @@ data/audit.log          JSONL audit log for write operations
 data/oauth-clients.json Dynamic OAuth clients registered by ChatGPT
 ```
 
-Only `data/docs` is exposed as the document workspace. Paths are always relative to that directory.
+Only `data/docs` is exposed as the notebook workspace. Paths are always relative to that directory.
 
 ## Requirements
 
@@ -90,7 +90,7 @@ Public hostname:
 your-mcp-domain.example.com
 
 Service:
-http://chatgpt-docs-mcp:8787
+http://chatgpt-notebook-mcp:8787
 ```
 
 Start the service:
@@ -102,8 +102,8 @@ docker compose up -d --build
 Check logs:
 
 ```bash
-docker logs --tail 80 chatgpt-docs-mcp
-docker logs --tail 80 chatgpt-docs-mcp-tunnel
+docker logs --tail 80 chatgpt-notebook-mcp
+docker logs --tail 80 chatgpt-notebook-mcp-tunnel
 ```
 
 ## ChatGPT Setup

@@ -1,7 +1,7 @@
 services:
-  chatgpt-docs-mcp:
+  chatgpt-notebook-mcp:
     build: .
-    container_name: chatgpt-docs-mcp
+    container_name: chatgpt-notebook-mcp
     restart: unless-stopped
     user: "1000:1000"
     read_only: true
@@ -31,8 +31,8 @@ services:
 
   cloudflared:
     image: cloudflare/cloudflared:latest
-    container_name: chatgpt-docs-mcp-tunnel
+    container_name: chatgpt-notebook-mcp-tunnel
     restart: unless-stopped
     command: tunnel --no-autoupdate run --token ${CLOUDFLARED_TOKEN}
     depends_on:
-      - chatgpt-docs-mcp
+      - chatgpt-notebook-mcp

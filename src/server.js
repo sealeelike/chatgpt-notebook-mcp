@@ -103,7 +103,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (_req, res) => {
-  res.type("text/plain").send("chatgpt-docs-mcp\n");
+  res.type("text/plain").send("chatgpt-notebook-mcp\n");
 });
 
 app.get("/health", (_req, res) => {
@@ -254,7 +254,7 @@ app.post("/oauth/token", (req, res) => {
 
 app.all(["/mcp", "/"], requireBearerToken, async (req, res) => {
   if (req.path === "/" && req.method === "GET") {
-    res.type("text/plain").send("chatgpt-docs-mcp\n");
+    res.type("text/plain").send("chatgpt-notebook-mcp\n");
     return;
   }
 
@@ -296,20 +296,20 @@ app.all(["/mcp", "/"], requireBearerToken, async (req, res) => {
 });
 
 app.listen(config.port, "0.0.0.0", () => {
-  console.log(`chatgpt-docs-mcp listening on ${config.port}`);
+  console.log(`chatgpt-notebook-mcp listening on ${config.port}`);
 });
 
 function createMcpServer() {
   const server = new McpServer({
-    name: "chatgpt-docs-mcp",
+    name: "chatgpt-notebook-mcp",
     version: "0.1.0",
   });
 
   server.tool(
     "list_files",
-    "List files and directories below a relative directory in the docs workspace. Use this before reading when you need to discover paths.",
+    "List files and directories below a relative directory in the notebook workspace. Use this before reading when you need to discover paths.",
     {
-      path: z.string().default(".").describe("Relative directory path under the docs workspace."),
+      path: z.string().default(".").describe("Relative directory path under the notebook workspace."),
       recursive: z.boolean().default(false).describe("Whether to list nested files recursively."),
     },
     async ({ path: inputPath = ".", recursive = false }) => {
@@ -321,9 +321,9 @@ function createMcpServer() {
 
   server.tool(
     "read_file",
-    "Read one text file from the docs workspace. Use this for Markdown notes and small text documents.",
+    "Read one text file from the notebook workspace. Use this for Markdown notes and small text documents.",
     {
-      path: z.string().describe("Relative file path under the docs workspace."),
+      path: z.string().describe("Relative file path under the notebook workspace."),
     },
     async ({ path: inputPath }) => {
       const target = await resolveWorkspacePath(inputPath);
@@ -339,9 +339,9 @@ function createMcpServer() {
 
   server.tool(
     "read_many_files",
-    "Read several text files from the docs workspace in one call.",
+    "Read several text files from the notebook workspace in one call.",
     {
-      paths: z.array(z.string()).min(1).max(20).describe("Relative file paths under the docs workspace."),
+      paths: z.array(z.string()).min(1).max(20).describe("Relative file paths under the notebook workspace."),
     },
     async ({ paths }) => {
       const files = [];
@@ -382,7 +382,7 @@ function createMcpServer() {
     "write_file",
     "Create or overwrite a text file. Existing files are backed up to history first. Use append_file or patch_file for safer edits when possible.",
     {
-      path: z.string().describe("Relative file path under the docs workspace."),
+      path: z.string().describe("Relative file path under the notebook workspace."),
       content: z.string().describe("Complete file content to write."),
     },
     async ({ path: inputPath, content }) => {
@@ -400,7 +400,7 @@ function createMcpServer() {
     "append_file",
     "Append text to a file, creating it if needed. Useful for inbox notes, logs, and daily notes.",
     {
-      path: z.string().describe("Relative file path under the docs workspace."),
+      path: z.string().describe("Relative file path under the notebook workspace."),
       content: z.string().describe("Text to append."),
     },
     async ({ path: inputPath, content }) => {
@@ -418,7 +418,7 @@ function createMcpServer() {
     "patch_file",
     "Replace exact text within a file. This is safer than overwriting a full document. Fails when old_text is not found.",
     {
-      path: z.string().describe("Relative file path under the docs workspace."),
+      path: z.string().describe("Relative file path under the notebook workspace."),
       old_text: z.string().min(1).describe("Exact text to replace."),
       new_text: z.string().describe("Replacement text."),
       replace_all: z.boolean().default(false).describe("Replace every occurrence instead of only the first."),
@@ -440,7 +440,7 @@ function createMcpServer() {
 
   server.tool(
     "move_file",
-    "Move or rename a file within the docs workspace. The destination parent directory is created if needed.",
+    "Move or rename a file within the notebook workspace. The destination parent directory is created if needed.",
     {
       from: z.string().describe("Existing relative file path."),
       to: z.string().describe("New relative file path."),
@@ -461,7 +461,7 @@ function createMcpServer() {
     "trash_file",
     "Move a file to the trash directory instead of permanently deleting it.",
     {
-      path: z.string().describe("Relative file path under the docs workspace."),
+      path: z.string().describe("Relative file path under the notebook workspace."),
     },
     async ({ path: inputPath }) => {
       const target = await resolveWorkspacePath(inputPath);
@@ -475,14 +475,14 @@ function createMcpServer() {
 
   server.tool(
     "delete_empty_directory",
-    "Delete an empty directory within the docs workspace. This only removes empty directories and never deletes files recursively.",
+    "Delete an empty directory within the notebook workspace. This only removes empty directories and never deletes files recursively.",
     {
-      path: z.string().describe("Relative empty directory path under the docs workspace."),
+      path: z.string().describe("Relative empty directory path under the notebook workspace."),
     },
     async ({ path: inputPath }) => {
       const target = await resolveWorkspacePath(inputPath, { allowDirectory: true });
       if (!target.relativePath) {
-        throw new Error("Refusing to delete the docs workspace root.");
+        throw new Error("Refusing to delete the notebook workspace root.");
       }
       const stat = await fs.stat(target.absolutePath);
       if (!stat.isDirectory()) {
@@ -496,9 +496,9 @@ function createMcpServer() {
 
   server.tool(
     "get_file_info",
-    "Get metadata for a file or directory in the docs workspace.",
+    "Get metadata for a file or directory in the notebook workspace.",
     {
-      path: z.string().describe("Relative path under the docs workspace."),
+      path: z.string().describe("Relative path under the notebook workspace."),
     },
     async ({ path: inputPath }) => {
       const target = await resolveWorkspacePath(inputPath, { allowDirectory: true });
@@ -686,7 +686,7 @@ function renderAuthorizePage(query, error = "") {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Authorize ChatGPT Docs MCP</title>
+  <title>Authorize ChatGPT Notebook MCP</title>
   <style>
     body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:#f6f7f9;color:#111827}
     main{max-width:420px;margin:12vh auto;padding:28px;background:#fff;border:1px solid #e5e7eb;border-radius:8px}
@@ -699,7 +699,7 @@ function renderAuthorizePage(query, error = "") {
 </head>
 <body>
   <main>
-    <h1>Authorize Docs MCP</h1>
+    <h1>Authorize Notebook MCP</h1>
     <p>Allow ChatGPT to read and write the configured Markdown workspace.</p>
     ${error ? `<div class="error">${escapeHtml(error)}</div>` : ""}
     <form method="post" action="/oauth/authorize">
@@ -718,7 +718,7 @@ async function resolveWorkspacePath(inputPath, options = {}) {
   const absolutePath = path.resolve(config.docsRoot, relative);
   const root = path.resolve(config.docsRoot);
   if (absolutePath !== root && !absolutePath.startsWith(`${root}${path.sep}`)) {
-    throw new Error("Path escapes docs workspace.");
+    throw new Error("Path escapes notebook workspace.");
   }
   if (options.mustExist !== false) {
     const stat = await fs.stat(absolutePath);
