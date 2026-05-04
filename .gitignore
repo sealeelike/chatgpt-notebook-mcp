@@ -1,0 +1,10 @@
+.env
+node_modules/
+data/audit.log
+data/oauth-clients.json
+data/docs/*
+data/history/*
+data/trash/*
+!data/docs/.gitkeep
+!data/history/.gitkeep
+!data/trash/.gitkeep

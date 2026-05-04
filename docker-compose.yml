@@ -1,0 +1,38 @@
+services:
+  chatgpt-docs-mcp:
+    build: .
+    container_name: chatgpt-docs-mcp
+    restart: unless-stopped
+    user: "1000:1000"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    expose:
+      - "8787"
+    env_file:
+      - .env
+    environment:
+      - TZ=Asia/Shanghai
+      - DOCS_ROOT=/data/docs
+      - HISTORY_ROOT=/data/history
+      - TRASH_ROOT=/data/trash
+      - AUDIT_LOG=/data/audit.log
+      - OAUTH_CLIENTS_FILE=/data/oauth-clients.json
+    volumes:
+      - ./data/docs:/data/docs
+      - ./data/history:/data/history
+      - ./data/trash:/data/trash
+      - ./data/audit.log:/data/audit.log
+      - ./data/oauth-clients.json:/data/oauth-clients.json
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: chatgpt-docs-mcp-tunnel
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARED_TOKEN}
+    depends_on:
+      - chatgpt-docs-mcp
